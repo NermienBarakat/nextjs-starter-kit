@@ -1,3 +1,12 @@
 # .husky/pre-commit
-prettier $(git diff --cached --name-only --diff-filter=ACMR | sed 's| |\\ |g') --write --ignore-unknown
-git update-index --again
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Format staged files with Prettier
+prettier --write $(git diff --cached --name-only --diff-filter=ACMR | sed 's| |\\ |g') --ignore-unknown
+
+# Lint staged files
+pnpm lint
+
+# Add formatted files back to the staging area
+git add $(git diff --cached --name-only --diff-filter=ACMR | sed 's| |\\ |g')
